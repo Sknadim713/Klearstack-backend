@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fashion Carousel</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    /* Customize carousel for different views */
+    @media (min-width: 768px) {
+      .carousel-item {
+        display: none;
+      }
+      .carousel-item.men {
+        display: block;
+      }
+    }
+    @media (max-width: 767px) {
+      .carousel-item {
+        display: none;
+      }
+      .carousel-item.women {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    <!-- Men's Fashion -->
+    <div class="carousel-item active men">
+      <img src="https://img.freepik.com/free-photo/medium-shot-man-posing-outdoors_23-2150204428.jpg?w=740" class="d-block w-100" alt="Men's Fashion">
+    </div>
+    <div class="carousel-item  men">
+      <img src="https://img.freepik.com/free-photo/medium-shot-man-posing-outdoors_23-2150204428.jpg?w=740" class="d-block w-100" alt="Men's Fashion">
+    </div>
+    <div class="carousel-item  men">
+      <img src="https://img.freepik.com/free-photo/medium-shot-man-posing-outdoors_23-2150204428.jpg?w=740" class="d-block w-100" alt="Men's Fashion">
+    </div>
+    <!-- Women's Fashion -->
+    <div class="carousel-item women">
+      <img src="https://img.freepik.com/free-photo/young-woman-purple-soft-cozy-sweater-background-cute-smiling-cheerfully-high-spirits-points-finger-left-empty-space_343596-7728.jpg?w=740" class="d-block w-100" alt="Women's Fashion">
+    </div>
+  </div>
+  <!-- Controls -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+<script>
+  $(document).ready(function(){
+    // Mouse up/down event to show men's fashion
+    $(window).on('mousewheel', function(event) {
+      if (event.originalEvent.deltaY > 0) {
+        $('.carousel-item').removeClass('women').addClass('men');
+      } else {
+        $('.carousel-item').removeClass('men').addClass('women');
+      }
+    });
+    // Left/right event to show women's fashion
+    $(document).on('keydown', function(e){
+      if(e.keyCode == 37) {
+        $('.carousel-item').removeClass('men').addClass('women');
+      } else if(e.keyCode == 39) {
+        $('.carousel-item').removeClass('women').addClass('men');
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
