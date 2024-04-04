@@ -43,7 +43,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/Mosaic')
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-
+app.use('/images', express.static(path.join(__dirname, 'routes', 'images')));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

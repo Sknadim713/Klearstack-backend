@@ -47,7 +47,8 @@ router.post('/addFounder', upload.single('photo'), async (req, res, next) => {
         // Storing only the file name in MongoDB
         const newFounder = new FounderModel({
             name, surname, position, message, contact,
-            photo: fileName // Storing only the file name
+            photo: fileName, // Storing only the file name
+            photoPath: filePath // Storing the full file path
         });
 
         // Save founder to MongoDB
@@ -58,6 +59,7 @@ router.post('/addFounder', upload.single('photo'), async (req, res, next) => {
         res.status(500).json({ success: false, error: error.message });
     }
 });
+
 
 
 
@@ -113,7 +115,7 @@ router.get('/ViewAllFounder', async (req, res, next) => {
     try {
         const founders = await FounderModel.find({}, '-__v'); // Excluding the "__v" field
         const total = founders.length;
-        res.status(200).json({ success: true, total, data: founders });
+        res.status(200).json({ success: true, total, result: founders });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
@@ -139,23 +141,6 @@ router.get('/ViewAllFounder', async (req, res, next) => {
 //     }
 // });
 
-// router.get('/ViewFounderById', async (req, res, next) => {
-//     try {
-//         const founderId = req.query.UserId;
-//         if (!founderId) {
-//             return res.status(400).json({ success: false, message: 'Founder ID is required' });
-//         }
-//         const founder = await FounderModel.findById(founderId);
-//         if (!founder) {
-//             return res.status(404).json({ success: false, message: 'Founder not found' });
-//         }
-//         res.status(200).json({ success: true, data: founder });
-//     } catch (error) {
-//         console.error("Error finding founder by ID:", error);
-//         res.status(500).json({ success: false, error: error.message });
-//     }
-// });
-
 router.get('/ViewFounderById', async (req, res, next) => {
     try {
         const founderId = req.query.UserId;
@@ -166,24 +151,40 @@ router.get('/ViewFounderById', async (req, res, next) => {
         if (!founder) {
             return res.status(404).json({ success: false, message: 'Founder not found' });
         }
-
-        // Construct file path for the photo
-        const photoFilePath = path.join(__dirname, "images", founder.photo);
-
-        // Check if the file exists
-        if (!fs.existsSync(photoFilePath)) {
-            return res.status(404).json({ success: false, message: 'Photo not found' });
-        }
-
-        // Add file path to founder object
-        founder.photoFilePath = photoFilePath;
-
         res.status(200).json({ success: true, data: founder });
     } catch (error) {
         console.error("Error finding founder by ID:", error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
+
+// router.get('/ViewFounderById', async (req, res, next) => {
+//     try {
+//         const founderId = req.query.UserId;
+//         if (!founderId) {
+//             return res.status(400).json({ success: false, message: 'Founder ID is required' });
+//         }
+//         const founder = await FounderModel.findById(founderId);
+//         if (!founder) {
+//             return res.status(404).json({ success: false, message: 'Founder not found' });
+//         }
+//         // Ensure founder.photo is a string
+//         if (typeof founder.photo !== 'string') {
+//             return res.status(500).json({ success: false, message: 'Invalid photo path' });
+//         }
+//         // Construct relative file path for the photo (assuming images are stored in routes/images directory)
+//         const photoFilePath = path.join("routes", "images", founder.photo);
+
+//         // Send the response with both file name and file path
+//         res.status(200).json({ success: true, data: { ...founder.toObject(), photoFilePath } });
+//     } catch (error) {
+//         console.error("Error finding founder by ID:", error);
+//         res.status(500).json({ success: false, error: error.message });
+//     }
+// });
+
+
+
 
 
 // ******************* GET API *******************
