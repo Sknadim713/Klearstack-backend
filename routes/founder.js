@@ -4,82 +4,53 @@ var router = express.Router();
 
 // const FounderModel = require('../bin/models/Founder.models');
 const FounderModel = require('./../models/Founder.model');
-const multer = require('multer');
+
 
 // Set up multer for file uploads
-const upload = multer({ dest: 'uploads/' });
-
-
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+// Multer configuration
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 // ******************* POST API *******************
 
-// router.post('/addFounder', async (req, resp) => {
-//     try {
 
-//         let name = req.body.name;
-//         let surname = req.body.surname;
-//         let position = req.body.position;
-//         let contact = req.body.contact;
-//         let message = req.body.message;
-//         let photo = req.body.photo;
-//         if (!name || !surname) {
-//             return res.status(400).json({ success: false, error: "Name and surname are required." });
-//         }
-
-//         let newFounder = new FounderModel({
-//             name: name,
-//             surname: surname,
-//             position: position,
-//             contact: contact,
-//             message: message,
-//             photo: photo
-//         })
-//         const savedFounder = await newFounder.save();
-//         resp.status(200).send({ status: 200, message: "Data saved successfully", data: savedFounder });
-//     } catch (error) {
-//         resp.status(500).send({ status: 500, message: "Unable to save", error: error.message });
-//     }
-// });
-
-// router.post('/addFounder', upload.single('photo'), async (req, res, next) => {
-//     try {
-//         const { name, surname, position, message, contact } = req.body;
-//         const photo = req.file; // Get the uploaded file from req.file
-
-//         // Check if name and surname are provided
-//         if (!name || !surname) {
-//             return res.status(400).json({ success: false, error: "Name and surname are required." });
-//         }
-
-//         // Create founder
-//         const newFounder = new FounderModel({
-//             name, surname, position, message, contact, photo
-//         });
-
-//         // Save founder to database
-//         const savedFounder = await newFounder.save();
-
-//         res.status(201).json({ success: true, data: savedFounder });
-//     } catch (error) {
-//         res.status(500).json({ success: false, error: error.message });
-//     }
-// });
 
 router.post('/addFounder', upload.single('photo'), async (req, res, next) => {
     try {
         const { name, surname, position, message, contact } = req.body;
-        const photo = req.file;
 
         if (!name || !surname) {
             return res.status(400).json({ success: false, error: "Name and surname are required." });
         }
+
+        // Check if file was uploaded successfully
+        if (!req.file) {
+            return res.status(400).json({ success: false, error: "File upload failed." });
+        }
+
+        // Saving the file to a directory
+        const uploadDir = path.join(__dirname, "images");
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir);
+        }
+        const fileName = `${Date.now()}-${req.file.originalname}`;
+        const filePath = path.join(uploadDir, fileName);
+
+        // Write file to disk
+        fs.writeFileSync(filePath, req.file.buffer);
+
+        // Log the directory path to the console
+        console.log('Directory path:', uploadDir);
+
+        // Storing only the file name in MongoDB
         const newFounder = new FounderModel({
             name, surname, position, message, contact,
-            photo: {
-                data: photo.buffer,
-                contentType: photo.mimetype
-            }
+            photo: fileName // Storing only the file name
         });
 
+        // Save founder to MongoDB
         const savedFounder = await newFounder.save();
 
         res.status(201).json({ success: true, data: savedFounder });
@@ -88,6 +59,39 @@ router.post('/addFounder', upload.single('photo'), async (req, res, next) => {
     }
 });
 
+
+
+// router.post('/addFounder', upload.single('photo'), async (req, res, next) => {
+//     try {
+//         const { name, surname, position, message, contact } = req.body;
+//         const photo = req.file;
+
+//         if (!name || !surname) {
+//             return res.status(400).json({ success: false, error: "Name and surname are required." });
+//         }
+
+//         // Saving the file to a directory
+//         const uploadDir = path.join(__dirname, 'uploads');
+//         if (!fs.existsSync(uploadDir)) {
+//             fs.mkdirSync(uploadDir);
+//         }
+//         const fileName = `${Date.now()}-${photo.originalname}`;
+//         const filePath = path.join(uploadDir, fileName);
+//         fs.writeFileSync(filePath, photo.buffer);
+
+//         // Storing only the file name in MongoDB
+//         const newFounder = new FounderModel({
+//             name, surname, position, message, contact,
+//             photo: fileName // Storing only the file name
+//         });
+
+//         const savedFounder = await newFounder.save();
+
+//         res.status(201).json({ success: true, data: savedFounder });
+//     } catch (error) {
+//         res.status(500).json({ success: false, error: error.message });
+//     }
+// });
 
 
 
@@ -135,6 +139,23 @@ router.get('/ViewAllFounder', async (req, res, next) => {
 //     }
 // });
 
+// router.get('/ViewFounderById', async (req, res, next) => {
+//     try {
+//         const founderId = req.query.UserId;
+//         if (!founderId) {
+//             return res.status(400).json({ success: false, message: 'Founder ID is required' });
+//         }
+//         const founder = await FounderModel.findById(founderId);
+//         if (!founder) {
+//             return res.status(404).json({ success: false, message: 'Founder not found' });
+//         }
+//         res.status(200).json({ success: true, data: founder });
+//     } catch (error) {
+//         console.error("Error finding founder by ID:", error);
+//         res.status(500).json({ success: false, error: error.message });
+//     }
+// });
+
 router.get('/ViewFounderById', async (req, res, next) => {
     try {
         const founderId = req.query.UserId;
@@ -145,14 +166,24 @@ router.get('/ViewFounderById', async (req, res, next) => {
         if (!founder) {
             return res.status(404).json({ success: false, message: 'Founder not found' });
         }
+
+        // Construct file path for the photo
+        const photoFilePath = path.join(__dirname, "images", founder.photo);
+
+        // Check if the file exists
+        if (!fs.existsSync(photoFilePath)) {
+            return res.status(404).json({ success: false, message: 'Photo not found' });
+        }
+
+        // Add file path to founder object
+        founder.photoFilePath = photoFilePath;
+
         res.status(200).json({ success: true, data: founder });
     } catch (error) {
         console.error("Error finding founder by ID:", error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
-
-
 
 
 // ******************* GET API *******************
