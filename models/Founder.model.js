@@ -6,8 +6,7 @@ const FounderSchema = mongoose.Schema({
     position: { type: String, required: false },
     message: { type: String },
     contact: { type: String },
-    photo: { type: String },
-    photoPath: { type: String }
+
 });
 
 const FounderModel = mongoose.model('founder', FounderSchema);

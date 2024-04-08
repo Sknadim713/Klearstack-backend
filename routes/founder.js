@@ -17,76 +17,41 @@ const upload = multer({ storage: storage });
 
 
 
-router.post('/addFounder', upload.single('photo'), async (req, res, next) => {
-    try {
-        const { name, surname, position, message, contact } = req.body;
-
-        if (!name || !surname) {
-            return res.status(400).json({ success: false, error: "Name and surname are required." });
-        }
-
-        // Check if file was uploaded successfully
-        if (!req.file) {
-            return res.status(400).json({ success: false, error: "File upload failed." });
-        }
-
-        // Saving the file to a directory
-        const uploadDir = path.join(__dirname, "images");
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir);
-        }
-        const fileName = `${Date.now()}-${req.file.originalname}`;
-        const filePath = path.join(uploadDir, fileName);
-
-        // Write file to disk
-        fs.writeFileSync(filePath, req.file.buffer);
-
-        // Log the directory path to the console
-        console.log('Directory path:', uploadDir);
-
-        // Storing only the file name in MongoDB
-        const newFounder = new FounderModel({
-            name, surname, position, message, contact,
-            photo: fileName, // Storing only the file name
-            photoPath: filePath // Storing the full file path
-        });
-
-        // Save founder to MongoDB
-        const savedFounder = await newFounder.save();
-
-        res.status(201).json({ success: true, data: savedFounder });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
-
-
-
 // router.post('/addFounder', upload.single('photo'), async (req, res, next) => {
 //     try {
 //         const { name, surname, position, message, contact } = req.body;
-//         const photo = req.file;
 
 //         if (!name || !surname) {
 //             return res.status(400).json({ success: false, error: "Name and surname are required." });
 //         }
 
+//         // Check if file was uploaded successfully
+//         if (!req.file) {
+//             return res.status(400).json({ success: false, error: "File upload failed." });
+//         }
+
 //         // Saving the file to a directory
-//         const uploadDir = path.join(__dirname, 'uploads');
+//         const uploadDir = path.join(__dirname, "images");
 //         if (!fs.existsSync(uploadDir)) {
 //             fs.mkdirSync(uploadDir);
 //         }
-//         const fileName = `${Date.now()}-${photo.originalname}`;
+//         const fileName = `${Date.now()}-${req.file.originalname}`;
 //         const filePath = path.join(uploadDir, fileName);
-//         fs.writeFileSync(filePath, photo.buffer);
+
+//         // Write file to disk
+//         fs.writeFileSync(filePath, req.file.buffer);
+
+//         // Log the directory path to the console
+//         console.log('Directory path:', uploadDir);
 
 //         // Storing only the file name in MongoDB
 //         const newFounder = new FounderModel({
 //             name, surname, position, message, contact,
-//             photo: fileName // Storing only the file name
+//             photo: fileName, // Storing only the file name
+//             photoPath: filePath // Storing the full file path
 //         });
 
+//         // Save founder to MongoDB
 //         const savedFounder = await newFounder.save();
 
 //         res.status(201).json({ success: true, data: savedFounder });
@@ -94,6 +59,32 @@ router.post('/addFounder', upload.single('photo'), async (req, res, next) => {
 //         res.status(500).json({ success: false, error: error.message });
 //     }
 // });
+
+
+
+
+router.post('/addFounder', async (req, res, next) => {
+    try {
+        const { name, surname, position, message, contact } = req.body;
+   
+
+        if (!name || !surname) {
+            return res.status(400).json({ success: false, error: "Name and surname are required." });
+        }
+
+    
+        const newFounder = new FounderModel({
+            name, surname, position, message, contact,
+           
+        });
+
+        const savedFounder = await newFounder.save();
+
+        res.status(201).json({ success: true, data: savedFounder });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
 
 
 
