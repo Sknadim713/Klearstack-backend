@@ -4,9 +4,10 @@ const UserModel = require('./../models/Sign.model')
 const bcrypt = require('bcrypt');
 //  **********************POST API *************
 
+
 router.post('/Newuser', async (req, resp) => {
     try {
-        const { email, password } = req.body;
+        const { email, password ,id} = req.body;
         const NewUser = new UserModel({
             email: email,
             password: password,

@@ -3,9 +3,11 @@ const mongoose = require('mongoose')
 const EmployeeSchema = mongoose.Schema(({
     name: { type: String },
     surname: { type: String },
-    lastname: { type: String },
+    city: { type: String },
     position: { type: String },
     joinyear: { type: String },
+    EmpId: { type: String  ,unique :true},
+
 }))
 
 
