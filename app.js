@@ -23,11 +23,14 @@ const app = express();
 app.use(cors());
 
 const mongoose = require('mongoose');
-// mongoose.connect('mongodb://localhost:27017/Mosaic')
+const { error } = require('console');
 mongoose.connect('mongodb://127.0.0.1:27017/Teqheal')
+.then(()=> console.log('Connected to MongoDB'))
+.catch(error => console.error('Error connecting to MongoDB:', error))
 
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(error => console.error('Error connecting to MongoDB:', error));
+// mongoose.connect('mongodb://127.0.0.1:27017/Teqheal')
+//   .then(() => console.log('Connected to MongoDB'))
+//   .catch(error => console.error('Error connecting to MongoDB:', error));
 
 
 // view engine setup
