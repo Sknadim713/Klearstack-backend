@@ -1,9 +1,25 @@
 const express = require('express')
 const router = express.Router()
 const EmployeeModel = require('./../models/Employee.model')
-const FounderModel = require('./../models/Founder.model')
 
-// router.post("/addemployee", async (req, resp, next) => {
+router.post("/addemployees", async (req, res) => {
+    try {
+        const { name, surname, city, position, joinyear } = req.body;
+        const newEmployee = new EmployeeModel({
+            name,
+            surname,
+            city,
+            position,
+            joinyear
+        });
+        const savedEmployee = await newEmployee.save();
+        res.status(201).json({ success: true, data: savedEmployee, message: "Employee Added Successfully" });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// router.post("/addemployee", async (req, resp) => {
 //     try {
 
 //         const { name, surname, city, position, joinyear } = req.body
@@ -21,55 +37,55 @@ const FounderModel = require('./../models/Founder.model')
 
 //     }
 // })
-router.post("/addemployee", async (req, resp, next) => {
-    try {
-        const { name, surname, city, position, joinyear } = req.body;
-        
-        // Generate EmpId
-        const lastEmployee = await EmployeeModel.findOne().sort({EmpId: -1}).limit(1); // Get the last employee
-        let empIdCounter = 1;
-        if(lastEmployee && lastEmployee.EmpId) {
-            const lastEmpId = lastEmployee.EmpId;
-            const lastEmpIdCounter = parseInt(lastEmpId.replace("Emp", ""));
-            empIdCounter = lastEmpIdCounter + 1;
-        }
-
-        const empId = "Emp" + empIdCounter;
-
-        // Create new employee with generated EmpId
-        const newEmployee = new EmployeeModel({
-            name,
-            surname,
-            city,
-            position,
-            joinyear,
-            EmpId: empId
-        });
-
-        // Save new employee
-        const savedEmployee = await newEmployee.save();
-        
-        resp.status(201).json({ success: true, data: savedEmployee, message: "Employee Added Successfully" });
-    } catch (error) {
-        resp.status(500).json({ success: false, error: error.message });
-    }
-});
-
-
-
-
-
-// router.get("/ViewAllEmployee", async (req, resp, next) => {
+// router.post("/addemployee", async (req, resp, next) => {
 //     try {
-//         const Employee = await EmployeeModel.find()
+//         const { name, surname, city, position, joinyear } = req.body;
+        
+//         // Generate EmpId
+//         const lastEmployee = await EmployeeModel.findOne().sort({EmpId: -1}).limit(1); // Get the last employee
+//         let empIdCounter = 1;
+//         if(lastEmployee && lastEmployee.EmpId) {
+//             const lastEmpId = lastEmployee.EmpId;
+//             const lastEmpIdCounter = parseInt(lastEmpId.replace("Emp", ""));
+//             empIdCounter = lastEmpIdCounter + 1;
+//         }
 
-//         const total = Employee.length
-//         resp.status(200).json({ success: true, total, data: Employee })
+//         const empId = "Emp" + empIdCounter;
 
+//         // Create new employee with generated EmpId
+//         const newEmployee = new EmployeeModel({
+//             name,
+//             surname,
+//             city,
+//             position,
+//             joinyear,
+//             EmpId: empId
+//         });
+
+//         // Save new employee
+//         const savedEmployee = await newEmployee.save();
+        
+//         resp.status(201).json({ success: true, data: savedEmployee, message: "Employee Added Successfully" });
 //     } catch (error) {
-//         resp.status(500).json({ success: false, error: error.message })
+//         resp.status(500).json({ success: false, error: error.message });
 //     }
-// })
+// });
+
+
+
+
+
+router.get("/ViewAllEmployee", async (req, resp, next) => {
+    try {
+        const Employee = await EmployeeModel.find()
+
+        const total = Employee.length
+        resp.status(200).json({ success: true, total, data: Employee })
+
+    } catch (error) {
+        resp.status(500).json({ success: false, error: error.message })
+    }
+})
 
 router.get('/ViewAllEmployee' , async(req ,resp) =>{
     try{

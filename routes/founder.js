@@ -63,26 +63,50 @@ const upload = multer({ storage: storage });
 
 
 
-router.post('/addFounder', async (req, res, next) => {
-    try {
-        const { name, surname, position, message, contact } = req.body;
+// router.post('/addFounder', async (req, res, next) => {
+//     try {
+//         const { name, surname, position, message, contact } = req.body;
 
-        if (!name || !surname) {
-            return res.status(400).json({ success: false, error: "Name and surname are required." });
-        }
-        const newFounder = new FounderModel({
-            name, surname, position, message, contact,
+//         if (!name || !surname) {
+//             return res.status(400).json({ success: false, error: "Name and surname are required." });
+//         }
+//         const newFounder = new FounderModel({
+//             name, surname, position, message, contact,
            
-        });
+//         });
 
-        const savedFounder = await newFounder.save();
+//         const savedFounder = await newFounder.save();
 
-        res.status(201).json({ success: true, data: savedFounder });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+//         res.status(201).json({ success: true, data: savedFounder });
+//     } catch (error) {
+//         res.status(500).json({ success: false, error: error.message });
+//     }
+// });
+
+
+// router.post("/addFounder", async (req, res) => {
+//     try {
+//         const { name, surname ,position ,message ,contact} = req.body;
+      
+//         const newUser = await FounderModel.create({ name, surname ,position ,message ,contact});
+//         res.status(200).json({ status: 200, message: "Data saved successfully", data: newUser });
+//     } catch (error) {
+//         res.status(500).json({ status: 500, message: "Unable to save", error: error.message });
+//     }
+// });
+
+
+
+router.post("/addFounder", async (req, resp) => {
+    try {
+        const { surname, position, message, contact, name } = req.body;
+        
+        const saveUser = await FounderModel.create({ surname, position, message, contact, name });
+        resp.status(200).send({ status: true, message: "Data saved successfully", data: saveUser });
+    } catch(error) {
+        resp.status(500).send({ status: 500, message: "Unable to save", error: error.message });
     }
 });
-
 
 
 // ******************* GET API *******************
