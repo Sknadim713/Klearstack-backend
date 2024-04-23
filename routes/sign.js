@@ -5,21 +5,32 @@ const bcrypt = require('bcrypt');
 //  **********************POST API *************
 
 
-router.post('/Newuser', async (req, resp) => {
-    try {
-        const { email, password ,id} = req.body;
-        const NewUser = new UserModel({
-            email: email,
-            password: password,
+// router.post('/Newuser', async (req, resp) => {
+//     try {
+//         const { email, password ,id} = req.body;
+//         const NewUser = new UserModel({
+//             email: email,
+//             password: password,
 
-        });
-        const saveUser = await NewUser.save();
-        resp.status(200).send({ status: 200, message: "Data saved successfully", data: saveUser });
+//         });
+//         const saveUser = await NewUser.save();
+//         resp.status(200).send({ status: 200, message: "Data saved successfully", data: saveUser });
+//     } catch (error) {
+//         // Send error response
+//         resp.status(500).send({ status: 500, message: "Unable to save", error: error.message });
+//     }
+// });
+
+router.post("/Newuser", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const newUser = await UserModel.create({ email, password });
+        res.status(200).json({ status: 200, message: "Data saved successfully", data: newUser });
     } catch (error) {
-        // Send error response
-        resp.status(500).send({ status: 500, message: "Unable to save", error: error.message });
+        res.status(500).json({ status: 500, message: "Unable to save", error: error.message });
     }
 });
+
 
 
 

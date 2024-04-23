@@ -66,13 +66,10 @@ const upload = multer({ storage: storage });
 router.post('/addFounder', async (req, res, next) => {
     try {
         const { name, surname, position, message, contact } = req.body;
-   
 
         if (!name || !surname) {
             return res.status(400).json({ success: false, error: "Name and surname are required." });
         }
-
-    
         const newFounder = new FounderModel({
             name, surname, position, message, contact,
            
