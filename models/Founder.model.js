@@ -5,7 +5,7 @@ const FounderSchema = mongoose.Schema({
     surname: { type: String, required: true },
     position: { type: String, required: false },
     message: { type: String },
-    contact: { type: Number },
+    contact: { type: Number  ,unique:true},
 
 });
 

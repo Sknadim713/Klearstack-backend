@@ -10,6 +10,7 @@ const FounderModel = require('./../models/Founder.model');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { error, count } = require('console');
 // Multer configuration
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -123,15 +124,54 @@ router.post("/addFounder", async (req, resp) => {
 //         res.status(500).json({ success: false, error: error.message });
 //     }
 // });
-router.get('/ViewAllFounder', async (req, res, next) => {
-    try {
-        const founders = await FounderModel.find({}, '-__v'); // Excluding the "__v" field
-        const total = founders.length;
-        res.status(200).json({ success: true, total, result: founders });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+// router.get('/ViewAllFounder', async (req, res, next) => {
+//     try {
+//         const founders = await FounderModel.find({}, '-__v'); 
+//         const total = founders.length;
+//         res.status(200).json({ success: true, total, result: founders });
+//     } catch (error) {
+//         res.status(500).json({ success: false, error: error.message });
+//     }
+// });
+
+// router.get('/ViewAllFounder', async (req, res, next) => {
+//     try {
+//         const founders = await FounderModel.find(); 
+//         const total = founders.length;
+//         res.status(200).json({ success: true, total, result: founders });
+//     } catch (error) {
+//         res.status(500).json({ success: false, error: error.message });
+//     }
+// });
+
+
+
+// router.get('/ViewAllFounder', async (req, res, next) => {
+//     try {
+//         const founders = await FounderModel.find().lean();
+//         if (!founders || founders.length === 0) {
+//             return res.status(404).json({ success: false, error: "No founders found" });
+//         }
+//         res.status(200).json({ success: true, total: founders.length, data: founders });
+//     } catch (error) {
+//         console.error("Error in ViewAllFounder:", error);
+//         res.status(500).json({ success: false, error: "Internal Server Error" });
+//     }
+// });
+
+
+router.get('/ViewAllFounder' , async(req ,resp)=>{
+    try{
+
+        const founder =await FounderModel.find().lean()
+        resp.status(200).json({success:true , total:founder.length , data:founder})
+    }catch(error){
+        resp.status(500).json({success:false ,  message: 'Internal Server Erro', error: error.message})
+
     }
-});
+
+})
+
 
 
 // ******************* GET API *******************
@@ -153,9 +193,12 @@ router.get('/ViewAllFounder', async (req, res, next) => {
 //     }
 // });
 
+
+
 router.get('/ViewFounderById', async (req, res, next) => {
     try {
         const founderId = req.query.UserId;
+
         if (!founderId) {
             return res.status(400).json({ success: false, message: 'Founder ID is required' });
         }
@@ -163,12 +206,13 @@ router.get('/ViewFounderById', async (req, res, next) => {
         if (!founder) {
             return res.status(404).json({ success: false, message: 'Founder not found' });
         }
-        res.status(200).json({ success: true, data: founder });
+        res.status(200).json({ success: true, message: 'Founder found', data: founder });
     } catch (error) {
         console.error("Error finding founder by ID:", error);
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ success: false, message: 'Error finding founder by ID', error: error.message });
     }
 });
+
 
 // router.get('/ViewFounderById', async (req, res, next) => {
 //     try {
