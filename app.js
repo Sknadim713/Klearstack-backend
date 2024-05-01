@@ -24,14 +24,17 @@ app.use(cors());
 
 const mongoose = require('mongoose');
 const { error } = require('console');
-mongoose.connect('mongodb://127.0.0.1:27017/Teqheal')
-.then(()=> console.log('Connected to MongoDB'))
-.catch(error => console.error('Error connecting to MongoDB:', error))
 
 // mongoose.connect('mongodb://127.0.0.1:27017/Teqheal')
-//   .then(() => console.log('Connected to MongoDB'))
-//   .catch(error => console.error('Error connecting to MongoDB:', error));
+// .then(()=> console.log('Connected to MongoDB'))
+// .catch(error => console.error('Error connecting to MongoDB:', error))
 
+
+mongoose.connect('mongodb://127.0.0.1:27017/Teqheal').then(()=>{
+  console.log("MongoDb Connected");
+}).catch((error)=>{
+console.log(error ,"Error Connecting");
+})
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

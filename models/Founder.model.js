@@ -7,7 +7,7 @@ const FounderSchema = mongoose.Schema({
     message: { type: String },
     contact: { type: Number  ,unique:true},
 
-});
+} ,{ timestamps: true });
 
 const FounderModel = mongoose.model('founder', FounderSchema);
 

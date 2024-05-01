@@ -18,77 +18,13 @@ const upload = multer({ storage: storage });
 
 
 
-// router.post('/addFounder', upload.single('photo'), async (req, res, next) => {
-//     try {
-//         const { name, surname, position, message, contact } = req.body;
 
-//         if (!name || !surname) {
-//             return res.status(400).json({ success: false, error: "Name and surname are required." });
-//         }
-
-//         // Check if file was uploaded successfully
-//         if (!req.file) {
-//             return res.status(400).json({ success: false, error: "File upload failed." });
-//         }
-
-//         // Saving the file to a directory
-//         const uploadDir = path.join(__dirname, "images");
-//         if (!fs.existsSync(uploadDir)) {
-//             fs.mkdirSync(uploadDir);
-//         }
-//         const fileName = `${Date.now()}-${req.file.originalname}`;
-//         const filePath = path.join(uploadDir, fileName);
-
-//         // Write file to disk
-//         fs.writeFileSync(filePath, req.file.buffer);
-
-//         // Log the directory path to the console
-//         console.log('Directory path:', uploadDir);
-
-//         // Storing only the file name in MongoDB
-//         const newFounder = new FounderModel({
-//             name, surname, position, message, contact,
-//             photo: fileName, // Storing only the file name
-//             photoPath: filePath // Storing the full file path
-//         });
-
-//         // Save founder to MongoDB
-//         const savedFounder = await newFounder.save();
-
-//         res.status(201).json({ success: true, data: savedFounder });
-//     } catch (error) {
-//         res.status(500).json({ success: false, error: error.message });
-//     }
-// });
-
-
-
-
-// router.post('/addFounder', async (req, res, next) => {
-//     try {
-//         const { name, surname, position, message, contact } = req.body;
-
-//         if (!name || !surname) {
-//             return res.status(400).json({ success: false, error: "Name and surname are required." });
-//         }
-//         const newFounder = new FounderModel({
-//             name, surname, position, message, contact,
-           
-//         });
-
-//         const savedFounder = await newFounder.save();
-
-//         res.status(201).json({ success: true, data: savedFounder });
-//     } catch (error) {
-//         res.status(500).json({ success: false, error: error.message });
-//     }
-// });
 
 
 // router.post("/addFounder", async (req, res) => {
 //     try {
 //         const { name, surname ,position ,message ,contact} = req.body;
-      
+
 //         const newUser = await FounderModel.create({ name, surname ,position ,message ,contact});
 //         res.status(200).json({ status: 200, message: "Data saved successfully", data: newUser });
 //     } catch (error) {
@@ -96,18 +32,29 @@ const upload = multer({ storage: storage });
 //     }
 // });
 
+// router.post("/addFounder", async (req, resp) => {
+//     try {
+//         const { name, surname, position, message, contact } = req.body;
+//         const founder = await FounderModel.create({name, surname, position, message, contact});
+//         resp.status(200).json({success:true , message:"Data saved successfully" , data:founder});
 
+
+//     } catch (error) {
+//         resp.status(500).json({success:true , error:"Data saved successfully" , error: error.message });
+//     }
+
+// })
 
 router.post("/addFounder", async (req, resp) => {
+    const { name, surname, position, message, contact } = req.body
     try {
-        const { surname, position, message, contact, name } = req.body;
-        
-        const saveUser = await FounderModel.create({ surname, position, message, contact, name });
-        resp.status(200).send({ status: true, message: "Data saved successfully", data: saveUser });
-    } catch(error) {
-        resp.status(500).send({ status: 500, message: "Unable to save", error: error.message });
+        const founder = await FounderModel.create({ name, surname, position, message, contact })
+        resp.status(200).send({ status: false, message: "Data saved successfully", data: founder })
+    } catch (eror) {
+        resp.status(500).send({ success: false, eror: "Internal Server Error", })
     }
-});
+})
+
 
 
 // ******************* GET API *******************
@@ -115,61 +62,28 @@ router.post("/addFounder", async (req, resp) => {
 
 // ******************* GET API *******************
 
-// router.get('/ViewAllFounder', async (req, res, next) => {
-//     try {
-//         const founders = await FounderModel.find();
-//         const total = founders.length
-//         res.status(200).json({ success: true, total, data: founders, });
-//     } catch (error) {
-//         res.status(500).json({ success: false, error: error.message });
-//     }
-// });
-// router.get('/ViewAllFounder', async (req, res, next) => {
-//     try {
-//         const founders = await FounderModel.find({}, '-__v'); 
-//         const total = founders.length;
-//         res.status(200).json({ success: true, total, result: founders });
-//     } catch (error) {
-//         res.status(500).json({ success: false, error: error.message });
-//     }
-// });
-
-// router.get('/ViewAllFounder', async (req, res, next) => {
-//     try {
-//         const founders = await FounderModel.find(); 
-//         const total = founders.length;
-//         res.status(200).json({ success: true, total, result: founders });
-//     } catch (error) {
-//         res.status(500).json({ success: false, error: error.message });
-//     }
-// });
 
 
 
-// router.get('/ViewAllFounder', async (req, res, next) => {
+// router.get('/ViewAllFounder', async (req, resp) => {
 //     try {
-//         const founders = await FounderModel.find().lean();
-//         if (!founders || founders.length === 0) {
-//             return res.status(404).json({ success: false, error: "No founders found" });
+//         const founder = await FounderModel.find().lean()
+//         if (!founder || founder.length === 0) {
+//             founder.push("Database Is Blank")
 //         }
-//         res.status(200).json({ success: true, total: founders.length, data: founders });
+//         resp.status(200).send({ success: true, total: founder.length, data: founder })
 //     } catch (error) {
-//         console.error("Error in ViewAllFounder:", error);
-//         res.status(500).json({ success: false, error: "Internal Server Error" });
+//         resp.status(500).send({ success: false, error: "Internal Server Error" })
 //     }
-// });
+// })
 
-
-router.get('/ViewAllFounder' , async(req ,resp)=>{
-    try{
-
-        const founder =await FounderModel.find().lean()
-        resp.status(200).json({success:true , total:founder.length , data:founder})
-    }catch(error){
-        resp.status(500).json({success:false ,  message: 'Internal Server Erro', error: error.message})
-
+router.get('/ViewAllFounder', async (req, resp) => {
+    const founder = await FounderModel.find().lean()
+    try {
+        resp.status(200).json({ success: true, total: founder.length, data: founder })
+    } catch (error) {
+        resp.status(500).json({ success: false, error: "Internal Server Error" })
     }
-
 })
 
 
@@ -195,23 +109,75 @@ router.get('/ViewAllFounder' , async(req ,resp)=>{
 
 
 
-router.get('/ViewFounderById', async (req, res, next) => {
-    try {
-        const founderId = req.query.UserId;
+// router.get('/ViewFounderById', async (req, res, next) => {
+//     try {
+//         const founderId = req.query.UserId;
 
-        if (!founderId) {
-            return res.status(400).json({ success: false, message: 'Founder ID is required' });
+//         if (!founderId) {
+//             return res.status(400).json({ success: false, message: 'Founder ID is required' });
+//         }
+//         const founder = await FounderModel.findById(founderId);
+//         if (!founder) {
+//             return res.status(404).json({ success: false, message: 'Founder not found' });
+//         }
+//         res.status(200).json({ success: true, message: 'Founder found', data: founder });
+//     } catch (error) {
+//         console.error("Error finding founder by ID:", error);
+//         res.status(500).json({ success: false, message: 'Error finding founder by ID', error: error.message });
+//     }
+// });
+
+router.get('/ViewFounderById', async (req, resp) => {
+    try {
+        const FounderId = req.query.UserId
+
+        if (!FounderId) {
+            resp.status(400).send({ success: false, message: "Founder ID is required" })
         }
-        const founder = await FounderModel.findById(founderId);
-        if (!founder) {
-            return res.status(404).json({ success: false, message: 'Founder not found' });
+        const founder =await FounderModel.findById(FounderId)
+        if(!founder){
+resp.status(400).send({success:false , message:"Fouder Not Found"})
         }
-        res.status(200).json({ success: true, message: 'Founder found', data: founder });
+        resp.status(200).send({success:true , message:"Founded Successfuly" ,data:founder})
+
     } catch (error) {
         console.error("Error finding founder by ID:", error);
-        res.status(500).json({ success: false, message: 'Error finding founder by ID', error: error.message });
+        //         res.status(500).json({ success: false, message: 'Error finding founder by ID', error: error.message });
     }
-});
+})
+
+
+// router.get('/ViewFounderById', async (req, res, next) => {
+//     try {
+//         // Extract founderId from query parameters
+//         const founderId = req.query.UserId;
+
+//         // Check if founderId is provided
+//         if (!founderId) {
+//             return res.status(400).json({ success: false, message: 'Founder ID is required' });
+//         }
+
+//         // Validate that founderId is a valid ObjectId
+//         if (!mongoose.Types.ObjectId.isValid(founderId)) {
+//             return res.status(400).json({ success: false, message: 'Invalid Founder ID' });
+//         }
+
+//         // Find founder by ID
+//         const founder = await FounderModel.findById(founderId);
+
+//         // Check if founder is found
+//         if (!founder) {
+//             return res.status(404).json({ success: false, message: 'Founder not found' });
+//         }
+
+//         // Respond with success and founder data
+//         res.status(200).json({ success: true, message: 'Founder found', data: founder });
+//     } catch (error) {
+//         // Handle errors
+//         console.error("Error finding founder by ID:", error);
+//         res.status(500).json({ success: false, message: 'Error finding founder by ID', error: error.message });
+//     }
+// });
 
 
 // router.get('/ViewFounderById', async (req, res, next) => {
