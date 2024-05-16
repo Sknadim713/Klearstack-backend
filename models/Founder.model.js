@@ -9,6 +9,6 @@ const FounderSchema = mongoose.Schema({
 
 } ,{ timestamps: true });
 
-const FounderModel = mongoose.model('founder', FounderSchema);
+const FounderModel = mongoose.model('founders', FounderSchema);
 
 module.exports = FounderModel;

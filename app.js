@@ -29,12 +29,28 @@ const { error } = require('console');
 // .then(()=> console.log('Connected to MongoDB'))
 // .catch(error => console.error('Error connecting to MongoDB:', error))
 
+// mongoose.connect('mongodb://127.0.0.1:27017/Teqheal').then(()=> console.log('Connected MongoDb')).catch(error => console.error("Database not connected" ,error))
 
-mongoose.connect('mongodb://127.0.0.1:27017/Teqheal').then(()=>{
-  console.log("MongoDb Connected");
-}).catch((error)=>{
-console.log(error ,"Error Connecting");
-})
+
+
+// async function connectToDatabase() {
+//     try {
+//         await mongoose.connect('mongodb://127.0.0.1:27017/Teqheal');
+//         console.log('Connected to MongoDB');
+//     } catch (error) {
+//         console.error('Database connection failed:', error);
+//     }
+// }
+
+ const connectToDatabase = async ()=>{
+  try {
+            await mongoose.connect('mongodb://127.0.0.1:27017/Teqheal');
+            console.log('Connected to MongoDB');
+        } catch (error) {
+            console.error('Database connection failed:', error);
+        }
+ }
+connectToDatabase();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

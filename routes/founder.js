@@ -32,28 +32,28 @@ const upload = multer({ storage: storage });
 //     }
 // });
 
-// router.post("/addFounder", async (req, resp) => {
-//     try {
-//         const { name, surname, position, message, contact } = req.body;
-//         const founder = await FounderModel.create({name, surname, position, message, contact});
-//         resp.status(200).json({success:true , message:"Data saved successfully" , data:founder});
-
-
-//     } catch (error) {
-//         resp.status(500).json({success:true , error:"Data saved successfully" , error: error.message });
-//     }
-
-// })
-
 router.post("/addFounder", async (req, resp) => {
-    const { name, surname, position, message, contact } = req.body
     try {
-        const founder = await FounderModel.create({ name, surname, position, message, contact })
-        resp.status(200).send({ status: false, message: "Data saved successfully", data: founder })
-    } catch (eror) {
-        resp.status(500).send({ success: false, eror: "Internal Server Error", })
+        const { name, surname, position, message, contact } = req.body;
+        const founder = await FounderModel.create({name, surname, position, message, contact});
+        resp.status(200).json({success:true , message:"Data saved successfully" , data:founder});
+
+
+    } catch (error) {
+        resp.status(500).json({success:true , error:"Data saved successfully" , error: error.message });
     }
+
 })
+
+// router.post("/addFounder", async (req, resp) => {
+//     const { name, surname, position, message, contact } = req.body
+//     try {
+//         const founder = await FounderModel.create({ name, surname, position, message, contact })
+//         resp.status(200).send({ status: false, message: "Data saved successfully", data: founder })
+//     } catch (eror) {
+//         resp.status(500).send({ success: false, eror: "Internal Server Error", })
+//     }
+// })
 
 
 
@@ -142,7 +142,7 @@ resp.status(400).send({success:false , message:"Fouder Not Found"})
 
     } catch (error) {
         console.error("Error finding founder by ID:", error);
-        //         res.status(500).json({ success: false, message: 'Error finding founder by ID', error: error.message });
+                res.status(500).json({ success: false, message: 'Error finding founder by ID', error: error.message });
     }
 })
 
