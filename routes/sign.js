@@ -31,6 +31,37 @@ router.post("/Newuser", async (req, res) => {
     }
 });
 
+router.put("/permissionAprove", async (req, res) => {
+    try {
+        const { userId } = req.query;
+        const { permission } = req.body;
+
+        if (!userId) {
+            return res.status(400).json({ status: 400, message: "userId is required" });
+        }
+
+        if (typeof permission !== 'boolean') {
+            return res.status(400).json({ status: 400, message: "Invalid permission value" });
+        }
+
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            userId,
+            { permission: permission },
+            { new: true } // This option returns the updated document
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ status: 404, message: "User not found" });
+        }
+
+        res.status(200).json({ status: 200, message: "Permission updated successfully", data: updatedUser });
+    } catch (error) {
+        res.status(500).json({ status: 500, message: "Unable to update permission", error: error.message });
+    }
+});
+
+
+
 
 
 // router.post('/login', async (req, res) => {
