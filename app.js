@@ -4,6 +4,7 @@ var createError = require('http-errors');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const PORT = 5000;
 
 var indexRouter = require('./routes/index');
 
@@ -24,6 +25,11 @@ app.use(cors());
 
 const mongoose = require('mongoose');
 const { error } = require('console');
+
+
+app.listen(PORT,()=>{
+  console.log(`Server is running http://localhost:${PORT}`);
+})
 
 // mongoose.connect('mongodb://127.0.0.1:27017/Teqheal')
 // .then(()=> console.log('Connected to MongoDB'))
@@ -76,6 +82,7 @@ app.use('/sign', signRouter);
 app.use(function (req, res, next) {
   next(createError(404));
 });
+
 
 
 app.post("/fileupload", (req, res) => {

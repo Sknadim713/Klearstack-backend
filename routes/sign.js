@@ -23,8 +23,8 @@ const bcrypt = require('bcrypt');
 
 router.post("/Newuser", async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const newUser = await UserModel.create({ email, password });
+        const { email, password ,fname ,lname, company ,permission ,role} = req.body;
+        const newUser = await UserModel.create({ email, password ,fname ,lname, company ,permission ,role});
         res.status(200).json({ status: 200, message: "Data saved successfully", data: newUser });
     } catch (error) {
         res.status(500).json({ status: 500, message: "Unable to save", error: error.message });
@@ -33,27 +33,72 @@ router.post("/Newuser", async (req, res) => {
 
 
 
+// router.post('/login', async (req, res) => {
+//     try {
+//         const { email, password ,role} = req.body;
+//         const user = await UserModel.findOne({ email: email , password:password });
+//         const errorMessage = "Incorrect email or password";
+//         if (!user) {
+//             return res.status(401).send({ status: 401, message: errorMessage });
+//         }
+//         if (password !== user.password) {
+//             return res.status(401).send({ status: 401, message: errorMessage });
+//         }
+
+//         res.status(200).send({ status: 200, message: "Login successful", data: user });
+//     } catch (error) {
+
+//         res.status(500).send({ status: 500, message: "Unable to login", error: error.message });
+//     }
+// });
 
 
+
+// router.post('/login', async (req, res) => {
+//     try {
+//         const { email, password ,permission:permission} = req.body;
+//         const user = await UserModel.findOne({ email: email  ,password:password});
+//         if (!user) {
+//             return res.status(404).send({ status: 404, message: "User not found" });
+//         }
+//         if (password !== user.password) {
+//             return res.status(401).send({ status: 401, message: "Incorrect password" });
+//         }
+
+//         // If password matches, send success response
+//         res.status(200).send({ status: 200, message: "Login successful", data: user });
+//     } catch (error) {
+//         // Send error response
+//         res.status(500).send({ status: 500, message: "Unable to login", error: error.message });
+//     }
+// });
 
 router.post('/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const user = await UserModel.findOne({ email: email });
+        const { email, password  } = req.body;
+        const user = await UserModel.findOne({ email: email, password: password });
+        console.log("user::>>",user);
+
         if (!user) {
             return res.status(404).send({ status: 404, message: "User not found" });
         }
+
         if (password !== user.password) {
             return res.status(401).send({ status: 401, message: "Incorrect password" });
         }
 
-        // If password matches, send success response
+        if (!user.permission) {
+            return res.status(403).send({ status: 403, message: "Permission Not Approved" });
+        }
+
+
         res.status(200).send({ status: 200, message: "Login successful", data: user });
     } catch (error) {
-        // Send error response
+    
         res.status(500).send({ status: 500, message: "Unable to login", error: error.message });
     }
 });
+
 
 
 
