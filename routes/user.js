@@ -7,7 +7,7 @@ const path = require('path');
 // Configure Multer Storage
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, '../public/images')); // Corrected Destination folder
+        cb(null, path.join(__dirname, '../public/images'));
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Create User API with File Upload
-router.post("/Create", upload.single('idproof'), async (req, res) => {
+router.post("/Newuser", upload.single('idproof'), async (req, res) => {
     try {
         const { email, password, fname, lname, company, permission, role } = req.body;
         const idproof = req.file ? `/public/images/${req.file.filename}` : null; // Save relative file path
@@ -63,6 +63,31 @@ router.put("/permissionAprove", async (req, res) => {
     }
 });
 
+
+router.put("/UpdateUser/:id", upload.single('idproof'), async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const { email, password, fname, lname, company, permission, role } = req.body;
+
+        // Prepare the update data
+        const updateData = {
+            email, password, fname, lname, company, permission, role
+        };
+
+        // Handle file upload if a new file is provided
+        if (req.file) {
+            updateData.idproof = `/public/images/${req.file.filename}`;
+        }
+        // Find user by ID and update
+        const updatedUser = await UserModel.findByIdAndUpdate(userId, updateData, { new: true });
+        if (!updatedUser) {
+            return res.status(404).json({ status: false, message: "User not found" });
+        }
+        res.status(200).json({ status: true, message: "User updated successfully", data: updatedUser });
+    } catch (error) {
+        res.status(400).json({ status: false, error: error.message });
+    }
+});
 
 
 
@@ -128,12 +153,12 @@ router.post('/login', async (req, res) => {
             return res.status(403).send({ status: 403, message: "Permission Not Approved" });
         }
 
-      
 
-        res.status(200).send({ 
-            status: 200, 
-            message: "Login successful", 
-            data: user, 
+
+        res.status(200).send({
+            status: 200,
+            message: "Login successful",
+            data: user,
         });
     } catch (error) {
         res.status(500).send({ status: 500, message: "Unable to login", error: error.message });
@@ -161,7 +186,7 @@ router.post('/login', async (req, res) => {
 
 //         res.status(200).send({ status: 200, message: "Login successful", data: user });
 //     } catch (error) {
-    
+
 //         res.status(500).send({ status: 500, message: "Unable to login", error: error.message });
 //     }
 // });
@@ -199,7 +224,7 @@ router.get("/Userlist", async (req, resp) => {
 
 //         resp.status(200).send({ success: true, data: About })
 //         console.log("About" ,About);
-         
+
 //     } catch (error) {
 //         resp.status(500).send({ success: false, error: "some thing issue" })
 //     }
@@ -217,17 +242,35 @@ router.get("/ViewAboutById", async (req, resp) => {
             return resp.status(404).json({ success: false, message: "User not found" });
         }
 
-        if (user.idproof) {
-            user.idproof = `${req.protocol}://${req.get('host')}${user.idproof}`;
-        }
+        // if (user.idproof) {
+        //     user.idproof = `${req.protocol}://${req.get('host')}${user.idproof}`;
+        // }
 
-        resp.status(200).send({ success: true, data: user });
-        console.log("User Details:", user);
+        resp.status(200).json({ success: true, message: "user data loaded success", data: user });
+        // console.log("User Details:", user);
 
     } catch (error) {
         resp.status(500).send({ success: false, error: "An issue occurred while retrieving the user details" });
     }
 });
+
+router.delete('/deleteUserById/:UserId', async (req, resp) => {
+    try {
+        const { UserId } = req.params;
+        if (!UserId) {
+            return resp.status(400).json({ success: false, message: "UserId is required" });
+        }
+        const Employee = await UserModel.findOneAndDelete(UserId)
+        if (!Employee) {
+            resp.status(404).json({ status: false, message: "User Id not found" })
+        }
+        resp.status(200).json({ success: true, data: Employee, message: "User deleted successfully" })
+
+    } catch (error) {
+        resp.status(500).send({ success: false, error: "An issue occurred" })
+    }
+
+})
 
 //  **********************GET API *************
 
