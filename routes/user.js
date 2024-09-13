@@ -1,17 +1,29 @@
 const express = require('express');
 const router = express.Router();
 const UserModel = require('../models/Sign.model');
-const multer = require('multer');
+const fs = require('fs'); // Add this line
 const path = require('path');
+const multer = require('multer');
 
-// Configure Multer Storage
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, '../public/images'));
+        const dir = path.join(__dirname, '../public/images');
+        
+        // Check if the directory exists, if not, create it
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+        
+        cb(null, dir); // Save to /public/images
     },
     filename: function (req, file, cb) {
+        // Preserve the original file name
+        const originalName = file.originalname.split('.')[0]; // Get the original name without extension
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+        const extension = path.extname(file.originalname); // Get the original extension
+        
+        // Construct the new file name
+        cb(null, `${originalName}-${uniqueSuffix}${extension}`);
     }
 });
 
