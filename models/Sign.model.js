@@ -9,7 +9,8 @@ const SignSchema = mongoose.Schema({
     permission: { type: Boolean, default: false },
     role: { type: String, required: true },
     idproof: { type: String }, // Store the path to the image file
-
+    createdBy: { type: String }, // Store the path to the image file
+    
 }, { timestamps: true }); 
 
 const SignModel = mongoose.model('users', SignSchema);

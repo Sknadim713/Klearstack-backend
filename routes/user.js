@@ -21,11 +21,11 @@ const upload = multer({ storage: storage });
 // Create User API with File Upload
 router.post("/Newuser", upload.single('idproof'), async (req, res) => {
     try {
-        const { email, password, fname, lname, company, permission, role } = req.body;
+        const { email, password, fname, lname, company, permission, role ,createdBy } = req.body;
         const idproof = req.file ? `/public/images/${req.file.filename}` : null; // Save relative file path
 
         const employee = await UserModel.create({
-            email, password, fname, lname, company, permission, role, idproof
+            email, password, fname, lname, company, permission, role, idproof  ,createdBy
         });
 
         res.status(200).json({ status: true, message: "Employee added successfully", data: employee });
