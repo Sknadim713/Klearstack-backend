@@ -8,22 +8,28 @@ var founderRouter = require('./routes/founder');
 var employeeRouter = require('./routes/employee');
 var aboutRouter = require('./routes/about');
 var signRouter = require('./routes/user');
+var staffRouter = require('./routes/staff');
+var idverification = require('./routes/idverification');
 const express = require('express');
 const cors = require('cors');
 const app = express();
-app.use(express.json()); 
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use('/public', express.static(path.join(__dirname, 'public')));
-app.use(cors());
+
+app.use(cors({
+  origin: 'https://klearstack-backend-ni7kj8wyh-shaikh-nadims-projects.vercel.app',
+  credentials: true
+}));
 const mongoose = require('mongoose');
 
 
 
-app.listen(PORT,()=>{
+app.listen(PORT, () => {
   console.log(`Server is running http://localhost:${PORT}`);
 })
 
-mongoose.connect('mongodb://127.0.0.1:27017/Teqheal').then(()=> console.log('Connected MongoDb')).catch(error => console.error("Database not connected" ,error))
+mongoose.connect('mongodb://127.0.0.1:27017/Teqheal').then(() => console.log('Connected MongoDb')).catch(error => console.error("Database not connected", error))
 
 
 
@@ -46,6 +52,8 @@ app.use('/founder', founderRouter);
 app.use('/about', aboutRouter);
 app.use('/employee', employeeRouter);
 app.use('/user', signRouter);
+app.use('/staff', staffRouter);
+app.use('/idverification', idverification);
 
 
 

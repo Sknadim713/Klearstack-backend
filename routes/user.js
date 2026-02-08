@@ -8,12 +8,10 @@ const multer = require('multer');
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const dir = path.join(__dirname, '../public/images');
-        
         // Check if the directory exists, if not, create it
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true });
         }
-        
         cb(null, dir); // Save to /public/images
     },
     filename: function (req, file, cb) {
@@ -21,7 +19,6 @@ const storage = multer.diskStorage({
         const originalName = file.originalname.split('.')[0]; // Get the original name without extension
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         const extension = path.extname(file.originalname); // Get the original extension
-        
         // Construct the new file name
         cb(null, `${originalName}-${uniqueSuffix}${extension}`);
     }
@@ -33,11 +30,11 @@ const upload = multer({ storage: storage });
 // Create User API with File Upload
 router.post("/Newuser", upload.single('idproof'), async (req, res) => {
     try {
-        const { email, password, fname, lname, company, permission, role ,createdBy } = req.body;
+        const { email, password, fname, lname, company, permission, role, createdBy } = req.body;
         const idproof = req.file ? `/public/images/${req.file.filename}` : null; // Save relative file path
 
         const employee = await UserModel.create({
-            email, password, fname, lname, company, permission, role, idproof  ,createdBy
+            email, password, fname, lname, company, permission, role, idproof, createdBy
         });
 
         res.status(200).json({ status: true, message: "Employee added successfully", data: employee });

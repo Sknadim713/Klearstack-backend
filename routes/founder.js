@@ -35,12 +35,12 @@ const upload = multer({ storage: storage });
 router.post("/addFounder", async (req, resp) => {
     try {
         const { name, surname, position, message, contact } = req.body;
-        const founder = await FounderModel.create({name, surname, position, message, contact});
-        resp.status(200).json({success:true , message:"Data saved successfully" , data:founder});
+        const founder = await FounderModel.create({ name, surname, position, message, contact });
+        resp.status(200).json({ success: true, message: "Data saved successfully", data: founder });
 
 
     } catch (error) {
-        resp.status(500).json({success:true , error:"Data saved successfully" , error: error.message });
+        resp.status(500).json({ success: true, error: "Data saved successfully", error: error.message });
     }
 
 })
@@ -134,15 +134,15 @@ router.get('/ViewFounderById', async (req, resp) => {
         if (!FounderId) {
             resp.status(400).send({ success: false, message: "Founder ID is required" })
         }
-        const founder =await FounderModel.findById(FounderId)
-        if(!founder){
-resp.status(400).send({success:false , message:"Fouder Not Found"})
+        const founder = await FounderModel.findById(FounderId)
+        if (!founder) {
+            resp.status(400).send({ success: false, message: "Fouder Not Found" })
         }
-        resp.status(200).send({success:true , message:"Founded Successfuly" ,data:founder})
+        resp.status(200).send({ success: true, message: "Founded Successfuly", data: founder })
 
     } catch (error) {
         console.error("Error finding founder by ID:", error);
-                res.status(500).json({ success: false, message: 'Error finding founder by ID', error: error.message });
+        res.status(500).json({ success: false, message: 'Error finding founder by ID', error: error.message });
     }
 })
 
@@ -247,7 +247,6 @@ router.delete('/DeleteFounderById', async (req, res, next) => {
         res.status(500).json({ success: false, error: error.message });
     }
 });
-
 
 
 
